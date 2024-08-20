@@ -1,65 +1,64 @@
-function Merge(left, mid, right) {
-    var n1 = mid - left + 1;
-    var n2 = right - mid;
-    var L = new Array(n1), R = new Array(n2);
-    
-    for (var i = 0; i < n1; i++)
-        L[i] = divSizes[left + i];
-    for (var j = 0; j < n2; j++)
-        R[j] = divSizes[mid + 1 + j];
+function merge_sort(start,mid,end)
+{
+    var p=start,q=mid+1;
 
-    var i = 0, j = 0, k = left;
+    var Arr=[],k=0;
 
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            divSizes[k] = L[i];
-            div_update(divElements[k], divElements[k], divSizes[k], L[i], colors.sorted);
-            i++;
-        } else {
-            divSizes[k] = R[j];
-            div_update(divElements[k], divElements[k], divSizes[k], R[j], colors.sorted);
-            j++;
+    for(var i=start; i<=end; i++)
+    {
+        if(p>mid)
+        {
+            Arr[k++]=divSizes[q++];
+            div_update(divElements[q-1],divElements[q-1],divSizes[q-1],divSizes[q-1],colors.comparison);//Color update
         }
-        k++;
+        else if(q>end)
+        {
+            Arr[k++]=divSizes[p++];
+            div_update(divElements[p-1],divElements[p-1],divSizes[p-1],divSizes[p-1],colors.comparison);//Color update
+        }
+        else if(divSizes[p]<divSizes[q])
+        {
+            Arr[k++]=divSizes[p++];
+            div_update(divElements[p-1],divElements[p-1],divSizes[p-1],divSizes[p-1],colors.comparison);//Color update
+        }
+        else
+        {
+            Arr[k++]=divSizes[q++];
+            div_update(divElements[q-1],divElements[q-1],divSizes[q-1],divSizes[q-1],colors.swap);//Color update
+        }
     }
 
-    while (i < n1) {
-        divSizes[k] = L[i];
-        div_update(divElements[k], divElements[k], divSizes[k], L[i], colors.sorted);
-        i++;
-        k++;
+    for(var t=0;t<k;t++)
+    {
+        divSizes[start++]=Arr[t];
+        div_update(divElements[start-1],divElements[start-1],divSizes[start-1],divSizes[start-1],colors.sorted);//Color update
     }
+}
+function merge_partition(start,end)
+{
+    if(start < end)
+    {
+        var mid=Math.floor((start + end) / 2);
+        div_update(divElements[mid],divElements[mid],divSizes[mid],divSizes[mid],colors.comparison);//Color update
 
-    while (j < n2) {
-        divSizes[k] = R[j];
-        div_update(divElements[k], divElements[k], divSizes[k], R[j], colors.sorted);
-        j++;
-        k++;
+        merge_partition(start,mid);
+        merge_partition(mid+1,end);
+
+        merge_sort(start,mid,end);
     }
 }
 
-function Sort(left, right) {
-    if (left >= right) {
-        return;
-    }
+function MergeSort()
+{
+    document.getElementById("Time_Worst").innerText="O(N log N)";
+    document.getElementById("Time_Average").innerText="Θ(N log N)";
+    document.getElementById("Time_Best").innerText="Ω(N log N)";
 
-    var mid = Math.floor((left + right) / 2);
+    document.getElementById("Space_Worst").innerText="O(N)";
 
-    Sort(left, mid);
-    Sort(mid + 1, right);
+    c_delay=0;
 
-    Merge(left, mid, right);
-}
+    merge_partition(0,divSizes.length-1);
 
-function MergeSort() {
-    document.getElementById("Time_Worst").innerHTML = "O(NLOG(N))";
-    document.getElementById("Time_Best").innerHTML = "O(NLOG(N))";
-    document.getElementById("Time_Average").innerHTML = "O(NLOG(N))";
-    document.getElementById("Space_Worst").innerHTML = "O(N)";
-
-    c_delay = 0;
-
-    Sort(0, divSizes.length - 1);
-
-    enableButtons();
+    enableButtons();;
 }
